@@ -1,6 +1,5 @@
 const express = require("express");
 const path = require('path')
-require("./db/mongoose");
 
 const app = express();
 const port = process.env.PORT;
@@ -34,16 +33,16 @@ io.on('connection',(socket)=>{
         return callback("Profanity not allowed")
     }
         io.emit('message',message)
-        callback('Delivered')
+        callback()
     })
 
     socket.on('sendLocation',(location,callback)=>{    
-        io.emit('message',`https://www.google.com/maps/?q=${location.latitude},${location.longitude}`)
+        io.emit('locationMessage',`https://www.google.com/maps/?q=${location.latitude},${location.longitude}`)
         callback()
         // console.log(location)
     })
 
-    socket.on('disconnect', () => {                           //messax  ge sent to all users
+    socket.on('disconnect', () => {                           //message sent to all users
         io.emit('message', 'A user has left!')
     })
     
