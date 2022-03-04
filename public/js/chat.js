@@ -19,14 +19,27 @@ document.querySelector('#message-form').addEventListener('submit',(e)=>{
     // const message = document.querySelector('message').value 
     let message = e.target.elements.message.value
 
-    socket.emit('sendMessage',message)
+    socket.emit('sendMessage',message,(error)=>{
+        if(error){
+            console.log(error)
+        }
+        console.log('Message delivered')
+               // console.log('The message has been',mess)
+    })
 })
 
-document.querySelector('#send_location').addEventListener('submit',()=>{
+document.querySelector('#send_location').addEventListener('click',()=>{
     if(!navigator.geolocation){
         return alert('Your browser does not support Geolocation services')
     }
     navigator.geolocation.getCurrentPosition((position)=>{
-        console.log(position)
+        // socket.on('sendLocation',(position)=>{
+            socket.emit('sendLocation',{   
+                latitude:position.coords.latitude,
+                longitude:position.coords.longitude
+            },()=>{
+            console.log("Location shared")
+            })
+
+        }) 
     })
-})
