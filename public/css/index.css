@@ -1,0 +1,160 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.top {
+  height: 100vh;
+  width: 100%;
+  background: antiquewhite;
+}
+.box {
+  display: flex;
+  width: 1300px;
+  height: 700px;
+  border-radius: 5px;
+  position: absolute;
+  background-color: #fff;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.left {
+  width: 310px;
+  height: 700px;
+  border-right: 1px solid #000;
+}
+.right {
+  height: 700px;
+  width: calc(1300px - 310px);
+}
+
+.topper {
+  width: 310px;
+  height: 50px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.imgcover {
+  text-align: center;
+}
+.card {
+  border-radius: 1rem !important;
+}
+ul {
+  padding-left: 0 !important;
+}
+
+.img {
+  max-width: 30%;
+  max-height: 30%;
+  object-fit: contain;
+  padding: 10px;
+}
+
+.ava {
+  height: 40px;
+  width: 40px;
+  border-radius: 50px;
+}
+
+li {
+  padding-left: 1rem;
+  list-style: none;
+}
+.friend {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  height: 60px;
+
+  transition: 0.5s ease;
+}
+.img_name {
+  display: flex;
+  align-items: center;
+}
+
+.name-list {
+  height: 364px;
+  overflow-y: scroll;
+}
+
+.name {
+  font-size: 18px !important;
+  margin-left: 20px !important;
+  font-weight: normal !important;
+}
+
+.n-list :hover {
+  background: #f5f8fd;
+}
+.right-top {
+  height: 50px;
+  border-bottom: 1px solid #000;
+  width: calc(1300px - 310px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.container {
+  border: 2px solid #dedede;
+  background-color: #f1f1f1;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 10px 0;
+}
+
+.chat-messages {
+  display: flex;
+  flex-direction: column;
+  max-height: 560px;
+  overflow-y: scroll;
+}
+
+.chat-message-left,
+.chat-message-right {
+  display: flex;
+  flex-shrink: 0;
+  border: 1 px hidden;
+  border-radius: 5px;
+}
+
+.chat-message-left {
+  margin-right: auto;
+}
+
+.chat-message-right {
+  flex-direction: row-reverse;
+  margin-left: auto;
+}
+.py-3 {
+  padding-top: 1rem !important;
+  padding-bottom: 1rem !important;
+}
+.px-4 {
+  padding-right: 1.5rem !important;
+  padding-left: 1.5rem !important;
+}
+.flex-grow-0 {
+  flex-grow: 0 !important;
+}
+.border-top {
+  border-top: 1px solid #dee2e6 !important;
+}
+
+.chat-right {
+  flex-direction: column;
+  background-color: #1b2339;
+  color: #f5f8fd;
+  border-radius: 10px;
+}
+
+.chat-left {
+  flex-direction: column;
+
+  border-radius: 10px;
+}
