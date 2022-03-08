@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require('path')
-const {generateMessage,generateLocationMessage} = require ('./service/messages')
+const {generateMessage,generateSendMessage,generateLocationMessage} = require ('./service/messages')
+const {addUser,removeUser,getUser,getUsersInRoom } = require ('./service/users')
 
 const app = express();
 const port = process.env.PORT;
@@ -25,34 +26,57 @@ const Filter = require('bad-words')
 // let count = 0
 io.on('connection',(socket)=>{
     console.log("Websocket connection established   ")
-
-    socket.on('join',({username,room})=>{   
-        socket.join(room)
-        
-    socket.emit('message',generateMessage('Room connected'))                 //message sent to user joined
-    socket.broadcast.to(room).emit('message',generateMessage(`${username} has joined.`))                 //message sent to all existing users
     
+    socket.on('join',(options,callback)=>{   
+        const {user,error} = addUser({id:socket.id,...options})
+        if(error){
+            return callback(error)
+        }   
+        socket.join(user.room)
+        
+    socket.emit('message',generateMessage('Room connected'))                                         //message sent to user joined
+    socket.broadcast.to(user.room).emit('message',generateMessage(`${user.username} has joined.`))   //message sent to all existing users
+    io.to(user.room).emit('roomData',{
+            room:user.room,
+            users: getUsersInRoom(user.room)
+
+    })  
+        callback()
     }) 
+
     socket.on('sendMessage',(message,callback)=>{    
     const filter = new Filter()  
-       
+    const user= getUser(socket.id)
+    console.log(user)
+    
     if(filter.isProfane(message)){
         return callback("Profanity not allowed")
     }
-        io.emit('message',generateMessage(message))
+        io.to(user.room).emit('message',generateSendMessage(user.username,message))
         callback()
     })
 
     socket.on('sendLocation',(location,callback)=>{    
-        io.emit('locationMessage',generateLocationMessage(`https://www.google.com/maps/?q=${location.latitude},${location.longitude}`))
-        callback()
-        // console.log(location)
+        const user = getUser(socket.id)
+        io.to(user.room).emit('locationMessage',generateLocationMessage(user.username,`https://www.google.com/maps/?q=${location.latitude},${location.longitude}`))
+        callback()  
+        console.log(location)
     })
 
     socket.on('disconnect', () => {                           //message sent to all users
-        io.emit('message', generateMessage('A user has left!'))               
+        const user = removeUser(socket.id)
+        if(user){
+        io.to(user.room).emit('message', generateMessage(`${user.username} has left!!`))               
+        io.to(user.room).emit('roomData',{
+            room:user.room,
+            users: getUsersInRoom(user.room)
+    })  
+        }
     })
-    
+})
+server.listen(port, () => {
+    console.log("Server is up on port " + port);
+})
     
     //server(emit) -> client(receive) :- countUpdated
     //client(emit) -> server(receive) :- increment
@@ -63,10 +87,8 @@ io.on('connection',(socket)=>{
 //         // socket.emit('countUpdated',count)       //admits to only that single connection
 //         io.emit('countUpdated',count)       //admits to all the connections
 //     })
-})
-server.listen(port, () => {
-    console.log("Server is up on port " + port);
-})
+
+
 
 //socket.emit                   send event to a specific client
 //io.emit                       send event to all clients

@@ -1,24 +1,18 @@
 const socket = io()
 
-// socket.on('countUpdated',(count)=>{
-//     console.log("The count has been updated",count)
-// })
-
-// document.querySelector('#increment').addEventListener('click',()=>{
-//     console.log('CLicked')
-//     socket.emit('increment')
-// })
-
 //elements
 const $messageForm = document.querySelector('#message-form')
 const $messageFormInput = $messageForm.querySelector('input')
 const $messageFormButton = document.querySelector('button')
 const $sendLocationButton = document.querySelector('#send_location')
 const $messages = document.querySelector('#messages')
+const $sidebar = document.querySelector('#sidebar')
 
 //templates
 const messageTemplate = document.querySelector('#message_template').innerHTML
 const locationTemplate = document.querySelector('#location_template').innerHTML
+
+const sidebarTemplate = document.querySelector('#sidebar_template').innerHTML
 
 //options
 const {username,room} = Qs.parse(location.search,{ignoreQueryPrefix:true})
@@ -27,6 +21,7 @@ socket.on('message',(message)=>{
     console.log(message)
 
     const html = Mustache.render(messageTemplate,{
+        username:message.username,
         message:message.text,   
         createdAt: moment(message.createdAt).format("kk:mm:ss")
     })   
@@ -35,14 +30,24 @@ socket.on('message',(message)=>{
 })
 
 socket.on('locationMessage',(url)=>{
-    console.log(url)
-    const htmlll = Mustache.render(locationTemplate,{
-        url:location.url,
-        createdAt: moment(location.createdAt).format("kk:mm:ss")
+    
+    const html = Mustache.render(locationTemplate,{
+        username:url.username,
+        url:url.url,
+        createdAt: moment(url.createdAt).format("kk:mm:ss")
     })  
-    console.log(htmlll)
-    $messages.insertAdjacentHTML('beforeend',htmlll)
 
+    $messages.insertAdjacentHTML('beforeend',html)
+
+})
+
+socket.on('roomData', ({room,users}) => {               
+    const html = Mustache.render(sidebarTemplate,{
+        room,
+        users
+    })  
+    $sidebar.innerHTML = html 
+    
 })
 
 $messageForm.addEventListener('submit',(e)=>{
@@ -82,4 +87,18 @@ $sendLocationButton.addEventListener('click',()=>{
         }) 
     })
 
-socket.emit('join',{username,room})
+socket.emit('join',{username,room},(error)=>{
+    if(error){
+        alert(error)
+        location.href ='/'
+    }
+})
+
+// socket.on('countUpdated',(count)=>{
+//     console.log("The count has been updated",count)
+// })
+
+// document.querySelector('#increment').addEventListener('click',()=>{
+//     console.log('CLicked')
+//     socket.emit('increment')
+// })

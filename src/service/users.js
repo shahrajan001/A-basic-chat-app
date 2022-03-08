@@ -22,12 +22,11 @@ const addUser = ({id,username,room})=>{
         return {
             error:'Username already exixts'
         }
-    }
-
+    }else{
     //store user
     const user = {id,username,room}
     users.push(user)
-    return {user}
+    return {user}}
 }
 
 
@@ -49,7 +48,10 @@ const getUser = (id)=>{
         return {
             error:"user not found"
         }
-    }else  return users[index] 
+    }else{
+        const user = users[index] 
+        return user
+    }
 }
 
 const getUsersInRoom = (room)=>{
@@ -64,6 +66,12 @@ const getUsersInRoom = (room)=>{
     }else return user
 }
 
+module.exports = {
+    addUser,
+    removeUser,
+    getUser,
+    getUsersInRoom
+}
 // addUser({
 //     id:001,
 //     username:"RAJAN",
