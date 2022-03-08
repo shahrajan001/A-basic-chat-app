@@ -26,12 +26,12 @@ const Filter = require('bad-words')
 io.on('connection',(socket)=>{
     console.log("Websocket connection established   ")
 
-    socket.emit('message',generateMessage('Room connected'))               //message sent to user joined
-
-    socket.broadcast.emit('message',generateMessage('A new user has joined.'))                 //message sent to all existing users
-    
     socket.on('join',({username,room})=>{   
         socket.join(room)
+        
+    socket.emit('message',generateMessage('Room connected'))                 //message sent to user joined
+    socket.broadcast.to(room).emit('message',generateMessage(`${username} has joined.`))                 //message sent to all existing users
+    
     }) 
     socket.on('sendMessage',(message,callback)=>{    
     const filter = new Filter()  
