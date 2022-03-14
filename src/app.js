@@ -4,7 +4,7 @@ const {generateMessage,generateSendMessage,generateLocationMessage} = require ('
 const {addUser,removeUser,getUser,getUsersInRoom } = require ('./service/users')
 
 const app = express();
-const port = process.env.PORT;
+const port = process.env.PORT || 3000;
 const publicDirectoryPath = path.join(__dirname,'../public')
 
 const http = require('http')                    //support for socket.io  //since you can't use express & socket.io together
@@ -47,7 +47,7 @@ io.on('connection',(socket)=>{
     socket.on('sendMessage',(message,callback)=>{    
     const filter = new Filter()  
     const user= getUser(socket.id)
-    console.log(user)
+    
     
     if(filter.isProfane(message)){
         return callback("Profanity not allowed")
@@ -60,7 +60,6 @@ io.on('connection',(socket)=>{
         const user = getUser(socket.id)
         io.to(user.room).emit('locationMessage',generateLocationMessage(user.username,`https://www.google.com/maps/?q=${location.latitude},${location.longitude}`))
         callback()  
-        console.log(location)
     })
 
     socket.on('disconnect', () => {                           //message sent to all users
